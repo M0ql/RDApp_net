@@ -35,7 +35,7 @@ class DioAdapter implements RDAdapter {
     }
 
     if (accessToken != null && accessToken.isNotEmpty) {
-      request.headers['Authorization'] = accessToken;
+      request.headers['Authorization'] = 'Bearer $accessToken';
     }
 
     final options = request.options?.copyWith(headers: request.headers) ??
