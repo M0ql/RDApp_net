@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:rd_app_net/src/adapter/dio/custom_interceptor.dart';
 
@@ -39,19 +38,36 @@ class DioAdapter implements RDAdapter {
         Options(headers: request.headers);
 
     try {
-      final response = switch (request.httpMethod) {
-        HttpMethod.get => await _dio.get(request.url,
-            options: options, cancelToken: RDBaseRequest.cancelToken),
-        HttpMethod.post => await _dio.post(request.url,
-            options: options,
-            cancelToken: RDBaseRequest.cancelToken,
-            data: request.params,
-            onSendProgress: request.onSendProgress),
-        HttpMethod.delete => await _dio.delete(request.url,
-            options: options,
-            cancelToken: RDBaseRequest.cancelToken,
-            data: request.params),
-      };
+      Response response;
+      switch (request.httpMethod) {
+        case HttpMethod.get:
+          response = await _dio.get(request.url,
+              options: options, cancelToken: RDBaseRequest.cancelToken);
+        case HttpMethod.post:
+          response = await _dio.post(request.url,
+              options: options,
+              cancelToken: RDBaseRequest.cancelToken,
+              data: request.params,
+              onSendProgress: request.onSendProgress);
+        case HttpMethod.delete:
+          response = await _dio.delete(request.url,
+              options: options,
+              cancelToken: RDBaseRequest.cancelToken,
+              data: request.params);
+      }
+      // final response = switch (request.httpMethod) {
+      //   HttpMethod.get => await _dio.get(request.url,
+      //       options: options, cancelToken: RDBaseRequest.cancelToken),
+      //   HttpMethod.post => await _dio.post(request.url,
+      //       options: options,
+      //       cancelToken: RDBaseRequest.cancelToken,
+      //       data: request.params,
+      //       onSendProgress: request.onSendProgress),
+      //   HttpMethod.delete => await _dio.delete(request.url,
+      //       options: options,
+      //       cancelToken: RDBaseRequest.cancelToken,
+      //       data: request.params),
+      // };
 
       return _buildResponse(response, request);
     } on DioException catch (e) {
@@ -61,9 +77,6 @@ class DioAdapter implements RDAdapter {
         response: _buildResponse(e.response, request),
         stackTrace: e.stackTrace,
       );
-    } catch (e) {
-      debugPrint(e.toString());
-      rethrow;
     }
   }
 
