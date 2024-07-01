@@ -15,7 +15,7 @@ abstract class RDBaseRequest {
 
   bool useHttps = true;
 
-  bool toAuth = false;
+  bool get toAuth => false;
 
   Options? options;
 
