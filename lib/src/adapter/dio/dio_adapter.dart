@@ -34,32 +34,25 @@ class DioAdapter implements RDAdapter {
               statusCode: 401, request: request, message: 'Not signed in.'));
     }
 
+    request.headers['Authorization'] = 'Bearer $accessToken';
+
     final options = request.options?.copyWith(headers: request.headers) ??
         Options(headers: request.headers);
 
     try {
-      Response response;
-      if (request.httpMethod == HttpMethod.get) {
-        response = await _dio.get(request.url,
-            options: options, cancelToken: RDBaseRequest.cancelToken);
-      } else if (request.httpMethod == HttpMethod.post) {
-        response = await _dio.post(request.url,
+      final response = switch (request.httpMethod) {
+        HttpMethod.get => await _dio.get(request.url,
+            options: options, cancelToken: RDBaseRequest.cancelToken),
+        HttpMethod.post => await _dio.post(request.url,
             options: options,
             cancelToken: RDBaseRequest.cancelToken,
             data: request.params,
-            onSendProgress: request.onSendProgress);
-      } else if (request.httpMethod == HttpMethod.delete) {
-        response = await _dio.delete(request.url,
+            onSendProgress: request.onSendProgress),
+        HttpMethod.delete => await _dio.delete(request.url,
             options: options,
             cancelToken: RDBaseRequest.cancelToken,
-            data: request.params);
-      } else {
-        response = await _dio.request(request.url,
-            options: options,
-            cancelToken: RDBaseRequest.cancelToken,
-            data: request.params,
-            onSendProgress: request.onSendProgress);
-      }
+            data: request.params),
+      };
 
       return _buildResponse(response, request);
     } on DioException catch (e) {
