@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:rd_app_net/src/adapter/dio/custom_interceptor.dart';
 
 import '../../../rd_app_net.dart';
-import '../../rd_base_request.dart';
 import '../../rd_error.dart';
 import '../rd_adapter.dart';
 
@@ -61,6 +61,8 @@ class DioAdapter implements RDAdapter {
         response: _buildResponse(e.response, request),
         stackTrace: e.stackTrace,
       );
+    } catch (e) {
+      debugPrint(e.toString());
     }
   }
 
