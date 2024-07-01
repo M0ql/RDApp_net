@@ -34,7 +34,9 @@ class DioAdapter implements RDAdapter {
               statusCode: 401, request: request, message: 'Not signed in.'));
     }
 
-    request.headers['Authorization'] = 'Bearer $accessToken';
+    if (accessToken != null && accessToken.isNotEmpty) {
+      request.headers['Authorization'] = accessToken;
+    }
 
     final options = request.options?.copyWith(headers: request.headers) ??
         Options(headers: request.headers);
