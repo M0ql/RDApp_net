@@ -63,6 +63,7 @@ class DioAdapter implements RDAdapter {
       );
     } catch (e) {
       debugPrint(e.toString());
+      rethrow;
     }
   }
 
