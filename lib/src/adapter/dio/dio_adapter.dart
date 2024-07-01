@@ -39,35 +39,27 @@ class DioAdapter implements RDAdapter {
 
     try {
       Response response;
-      switch (request.httpMethod) {
-        case HttpMethod.get:
-          response = await _dio.get(request.url,
-              options: options, cancelToken: RDBaseRequest.cancelToken);
-        case HttpMethod.post:
-          response = await _dio.post(request.url,
-              options: options,
-              cancelToken: RDBaseRequest.cancelToken,
-              data: request.params,
-              onSendProgress: request.onSendProgress);
-        case HttpMethod.delete:
-          response = await _dio.delete(request.url,
-              options: options,
-              cancelToken: RDBaseRequest.cancelToken,
-              data: request.params);
+      if (request.httpMethod == HttpMethod.get) {
+        response = await _dio.get(request.url,
+            options: options, cancelToken: RDBaseRequest.cancelToken);
+      } else if (request.httpMethod == HttpMethod.post) {
+        response = await _dio.post(request.url,
+            options: options,
+            cancelToken: RDBaseRequest.cancelToken,
+            data: request.params,
+            onSendProgress: request.onSendProgress);
+      } else if (request.httpMethod == HttpMethod.delete) {
+        response = await _dio.delete(request.url,
+            options: options,
+            cancelToken: RDBaseRequest.cancelToken,
+            data: request.params);
+      } else {
+        response = await _dio.request(request.url,
+            options: options,
+            cancelToken: RDBaseRequest.cancelToken,
+            data: request.params,
+            onSendProgress: request.onSendProgress);
       }
-      // final response = switch (request.httpMethod) {
-      //   HttpMethod.get => await _dio.get(request.url,
-      //       options: options, cancelToken: RDBaseRequest.cancelToken),
-      //   HttpMethod.post => await _dio.post(request.url,
-      //       options: options,
-      //       cancelToken: RDBaseRequest.cancelToken,
-      //       data: request.params,
-      //       onSendProgress: request.onSendProgress),
-      //   HttpMethod.delete => await _dio.delete(request.url,
-      //       options: options,
-      //       cancelToken: RDBaseRequest.cancelToken,
-      //       data: request.params),
-      // };
 
       return _buildResponse(response, request);
     } on DioException catch (e) {
