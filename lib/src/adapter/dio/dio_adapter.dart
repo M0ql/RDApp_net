@@ -11,11 +11,11 @@ class DioAdapter implements RDAdapter {
 
   DioAdapter._() : _dio = Dio() {
     _dio.interceptors.addAll([
-      CustomInterceptor(_dio),
       PrettyDioLogger(
         requestBody: true,
         requestHeader: false,
       ),
+      CustomInterceptor(_dio),
     ]);
   }
 
