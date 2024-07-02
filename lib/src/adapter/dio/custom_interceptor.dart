@@ -44,14 +44,26 @@ class CustomInterceptor extends Interceptor {
         return handler.next(err);
       }
 
+      final removableRequest = [];
+
       for (final request in _pendingRequests) {
         _addToken(request.options);
         try {
           final responseOfRequest = await _dio.fetch(request.options);
           request.handler.resolve(responseOfRequest);
         } on DioException catch (e) {
+          if (e.response?.statusCode == 401) {
+            _pendingRequests.clear();
+            return request.handler.reject(e);
+          }
           request.handler.reject(e);
+        } finally {
+          removableRequest.add(request);
         }
+      }
+
+      for (final request in removableRequest) {
+        _pendingRequests.remove(request);
       }
 
       _addToken(requestOptions);
