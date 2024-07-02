@@ -54,6 +54,7 @@ class CustomInterceptor extends Interceptor {
         }
       }
 
+      _addToken(requestOptions);
       try {
         final response = await _dio.fetch(requestOptions);
         return handler.resolve(response);
