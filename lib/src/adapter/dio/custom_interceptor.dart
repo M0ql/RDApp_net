@@ -3,8 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../rd_app_net.dart';
 
 class CustomInterceptor extends Interceptor {
-  final _pendingRequests =
-      <({RequestOptions options, RequestInterceptorHandler handler})>[];
+  final _pendingRequests = <({RequestOptions options, dynamic handler})>[];
 
   bool _needRefresh = false;
 
@@ -33,20 +32,21 @@ class CustomInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401 && !_duringRetrying) {
       final requestOptions = err.response!.requestOptions;
-      if (err.requestOptions.headers['Authorization'] ==
-          'Bearer ${RDNet().token()}') {
-        _needRefresh = true;
-        try {
-          await RDNet().onRefreshToken();
-          _needRefresh = false;
-        } on DioException {
-          for (final request in _pendingRequests) {
-            request.handler.reject(DioException(
-                requestOptions: request.options, message: 'Need to sign in.'));
-          }
-          _pendingRequests.clear();
-          return handler.next(err);
+      if (_needRefresh) {
+        _pendingRequests.add((options: requestOptions, handler: handler));
+        return;
+      }
+      _needRefresh = true;
+      try {
+        await RDNet().onRefreshToken();
+        _needRefresh = false;
+      } on DioException {
+        for (final request in _pendingRequests) {
+          request.handler.reject(DioException(
+              requestOptions: request.options, message: 'Need to sign in.'));
         }
+        _pendingRequests.clear();
+        return handler.next(err);
       }
 
       final removableRequest = [];
@@ -61,7 +61,8 @@ class CustomInterceptor extends Interceptor {
           if (e.response?.statusCode == 401) {
             _pendingRequests.clear();
             _duringRetrying = false;
-            return request.handler.reject(e);
+            request.handler.reject(e);
+            return;
           }
           request.handler.reject(e);
         } finally {
