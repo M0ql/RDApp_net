@@ -73,6 +73,7 @@ class RDNet {
         return result;
 
       case 401:
+        onNeedLoginError();
         throw NeedLoginError(
             stackTrace: stackTrace, response: response, message: message);
 

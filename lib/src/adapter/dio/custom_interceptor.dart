@@ -39,8 +39,8 @@ class CustomInterceptor extends Interceptor {
         _needRefresh = false;
       } on DioException {
         for (final request in _pendingRequests) {
-          request.handler.reject(
-              DioException(requestOptions: request.options, message: '需重新登录'));
+          request.handler.reject(DioException(
+              requestOptions: request.options, message: 'Need to sign in.'));
         }
         _pendingRequests.clear();
         return handler.next(err);
