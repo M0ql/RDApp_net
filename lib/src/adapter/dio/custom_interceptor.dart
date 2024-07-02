@@ -65,9 +65,6 @@ class CustomInterceptor extends Interceptor {
     return handler.next(err);
   }
 
-  void _addToken(RequestOptions options) {
-    if (options.headers['Authorization'] == null) {
+  void _addToken(RequestOptions options) =>
       options.headers['Authorization'] = 'Bearer ${RDNet().token()}';
-    }
-  }
 }
