@@ -33,17 +33,19 @@ class CustomInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401 && !_duringRetrying) {
       final requestOptions = err.response!.requestOptions;
-      _needRefresh = true;
-      try {
-        await RDNet().onRefreshToken();
-        _needRefresh = false;
-      } on DioException {
-        for (final request in _pendingRequests) {
-          request.handler.reject(DioException(
-              requestOptions: request.options, message: 'Need to sign in.'));
+      if (err.requestOptions.headers['Authorization'] == RDNet().token()) {
+        _needRefresh = true;
+        try {
+          await RDNet().onRefreshToken();
+          _needRefresh = false;
+        } on DioException {
+          for (final request in _pendingRequests) {
+            request.handler.reject(DioException(
+                requestOptions: request.options, message: 'Need to sign in.'));
+          }
+          _pendingRequests.clear();
+          return handler.next(err);
         }
-        _pendingRequests.clear();
-        return handler.next(err);
       }
 
       final removableRequest = [];
@@ -75,10 +77,9 @@ class CustomInterceptor extends Interceptor {
         final response = await _dio.fetch(requestOptions);
         return handler.resolve(response);
       } on DioException catch (e) {
-        if (e.response?.statusCode == 401) {
-          _duringRetrying = false;
-        }
         return handler.next(e);
+      } finally {
+        _duringRetrying = false;
       }
     }
     return handler.next(err);
