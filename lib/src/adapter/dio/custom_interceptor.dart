@@ -33,7 +33,8 @@ class CustomInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401 && !_duringRetrying) {
       final requestOptions = err.response!.requestOptions;
-      if (err.requestOptions.headers['Authorization'] == RDNet().token()) {
+      if (err.requestOptions.headers['Authorization'] ==
+          'Bearer ${RDNet().token()}') {
         _needRefresh = true;
         try {
           await RDNet().onRefreshToken();
