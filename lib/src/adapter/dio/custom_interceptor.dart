@@ -31,10 +31,10 @@ class CustomInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
       final requestOptions = err.response!.requestOptions;
-
+      _needRefresh = true;
       try {
         await RDNet().onRefreshToken();
-        _needRefresh = true;
+        _needRefresh = false;
       } on DioException {
         for (final request in _pendingRequests) {
           request.handler.reject(
