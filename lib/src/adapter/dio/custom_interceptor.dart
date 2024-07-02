@@ -12,6 +12,8 @@ class CustomInterceptor extends Interceptor {
 
   final Dio _dio;
 
+  bool _duringRetrying = false;
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (_needRefresh) {
@@ -29,7 +31,7 @@ class CustomInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401) {
+    if (err.response?.statusCode == 401 && !_duringRetrying) {
       final requestOptions = err.response!.requestOptions;
       _needRefresh = true;
       try {
@@ -45,6 +47,7 @@ class CustomInterceptor extends Interceptor {
       }
 
       final removableRequest = [];
+      _duringRetrying = true;
 
       for (final request in _pendingRequests) {
         _addToken(request.options);
@@ -54,6 +57,7 @@ class CustomInterceptor extends Interceptor {
         } on DioException catch (e) {
           if (e.response?.statusCode == 401) {
             _pendingRequests.clear();
+            _duringRetrying = false;
             return request.handler.reject(e);
           }
           request.handler.reject(e);
@@ -71,6 +75,9 @@ class CustomInterceptor extends Interceptor {
         final response = await _dio.fetch(requestOptions);
         return handler.resolve(response);
       } on DioException catch (e) {
+        if (e.response?.statusCode == 401) {
+          _duringRetrying = false;
+        }
         return handler.next(e);
       }
     }
