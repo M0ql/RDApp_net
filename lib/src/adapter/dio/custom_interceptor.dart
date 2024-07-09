@@ -38,7 +38,7 @@ class CustomInterceptor extends Interceptor {
       }
       _needRefresh = true;
       try {
-        await RDNet().onRefreshToken();
+        await RDNet.onRefreshToken();
         _needRefresh = false;
       } on DioException {
         for (final request in _pendingRequests) {
@@ -88,5 +88,5 @@ class CustomInterceptor extends Interceptor {
   }
 
   void _addToken(RequestOptions options) =>
-      options.headers['Authorization'] = 'Bearer ${RDNet().token()}';
+      options.headers['Authorization'] = 'Bearer ${RDNet.accessToken()}';
 }

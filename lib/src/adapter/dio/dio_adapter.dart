@@ -25,7 +25,7 @@ class DioAdapter implements RDAdapter {
 
   @override
   Future<RDNetResponse> send(RDBaseRequest request) async {
-    final accessToken = RDNet().token();
+    final accessToken = RDNet.accessToken();
     final isLogin = accessToken != null && accessToken.isNotEmpty;
 
     if (request.needLogin && !isLogin) {

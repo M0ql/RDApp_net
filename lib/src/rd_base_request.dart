@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:rd_app_net/rd_app_net.dart';
 
 enum HttpMethod {
   get,
@@ -7,9 +8,9 @@ enum HttpMethod {
 }
 
 abstract class RDBaseRequest {
-  final _apiBaseUrl = 'host.ratingdog.cn';
+  final _apiBaseUrl = RDNet.apiBaseUrl;
 
-  final _authBaseUrl = 'auth.ratingdog.cn';
+  final _authBaseUrl = RDNet.authBaseUrl;
 
   String? pathParams;
 

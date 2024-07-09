@@ -8,10 +8,7 @@ import 'adapter/rd_adapter.dart';
 import 'rd_base_request.dart';
 
 class RDNet {
-  RDNet._(
-      {required this.token,
-      required this.onNeedLoginError,
-      required this.onRefreshToken});
+  RDNet._();
 
   static late final RDNet _instance;
 
@@ -26,18 +23,26 @@ class RDNet {
   static void init(
       {required VoidCallback onNeedLoginError,
       required AsyncCallback onRefreshToken,
-      required ValueGetter<String?> token}) {
-    _instance = RDNet._(
-        onNeedLoginError: onNeedLoginError,
-        onRefreshToken: onRefreshToken,
-        token: token);
+      required ValueGetter<String?> accessToken,
+      required String apiBaseUrl,
+      required String authBaseUrl}) {
+    _instance = RDNet._();
+    RDNet.onNeedLoginError = onNeedLoginError;
+    RDNet.onRefreshToken = onRefreshToken;
+    RDNet.accessToken = accessToken;
+    RDNet.apiBaseUrl = apiBaseUrl;
+    RDNet.authBaseUrl = authBaseUrl;
   }
 
-  final VoidCallback onNeedLoginError;
+  static late final VoidCallback onNeedLoginError;
 
-  final AsyncCallback onRefreshToken;
+  static late final AsyncCallback onRefreshToken;
 
-  final ValueGetter<String?> token;
+  static late final ValueGetter<String?> accessToken;
+
+  static late final String apiBaseUrl;
+
+  static late final String authBaseUrl;
 
   Future fire(RDBaseRequest request) async {
     RDNetResponse response;
