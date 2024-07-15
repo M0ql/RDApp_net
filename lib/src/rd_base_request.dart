@@ -55,13 +55,14 @@ abstract class RDBaseRequest {
   var params = <String, Object?>{};
 
   RDBaseRequest addParam(String k, Object? v) {
-    // params[k] = v is List ? jsonEncode(v) : v;
-    params[k] = v;
+    if (v != null) params[k] = v;
 
     return this;
   }
 
   RDBaseRequest addAllParams(Map<String, Object?> params) {
+    params.removeWhere((key, value) => value == null);
+
     this.params.addAll(params);
 
     return this;
