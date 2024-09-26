@@ -87,6 +87,9 @@ class CustomInterceptor extends Interceptor {
     return handler.next(err);
   }
 
-  void _addToken(RequestOptions options) =>
-      options.headers['Authorization'] = 'Bearer ${RDNet.accessToken()}';
+  void _addToken(RequestOptions options) {
+    options.headers['Ratingdog.TenantId'] = RDNet.tenantId() ?? 1;
+    options.headers['User-Agent'] = RDNet.userAgent;
+    options.headers['Authorization'] = 'Bearer ${RDNet.accessToken()}';
+  }
 }
