@@ -3,7 +3,6 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:rd_app_net/src/adapter/dio/custom_interceptor.dart';
 
 import '../../../rd_app_net.dart';
-import '../../rd_error.dart';
 import '../rd_adapter.dart';
 
 class DioAdapter implements RDAdapter {
@@ -51,6 +50,7 @@ class DioAdapter implements RDAdapter {
         HttpMethod.delete => await _dio.delete(request.url,
             options: options,
             cancelToken: RDBaseRequest.cancelToken,
+            queryParameters: request.params,
             data: request.params),
       };
 
