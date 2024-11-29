@@ -79,10 +79,11 @@ class DioAdapter implements RDAdapter {
       );
 
   void _addToken(Options options) {
-    (options.headers ??= {}).addAll({
+    final headers = {
       'Ratingdog.TenantId': RDNet.tenantId() ?? 1,
       'User-Agent': RDNet.userAgent,
       'Authorization': 'Bearer ${RDNet.accessToken()}'
-    });
+    }.cast<String, dynamic>();
+    (options.headers ??= {}).addAll(headers);
   }
 }
