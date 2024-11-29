@@ -6,6 +6,8 @@ import '../rd_base_request.dart';
 
 abstract interface class RDAdapter {
   Future<RDNetResponse> send(RDBaseRequest request);
+
+  Future<RDNetResponse> download(RDBaseRequest request, String savePath);
 }
 
 class RDNetResponse<T> {

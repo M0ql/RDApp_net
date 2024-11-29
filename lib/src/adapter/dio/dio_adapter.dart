@@ -73,4 +73,33 @@ class DioAdapter implements RDAdapter {
         message: response?.statusMessage,
         data: response?.data,
       );
+
+  @override
+  Future<RDNetResponse> download(RDBaseRequest request, String savePath) async {
+    final accessToken = RDNet.accessToken();
+    final isLogin = accessToken != null && accessToken.isNotEmpty;
+
+    if (request.needLogin && !isLogin) {
+      throw NeedLoginError(
+          response: RDNetResponse(
+              statusCode: 401, request: request, message: 'Not signed in.'));
+    }
+
+    final options = request.options?.copyWith(headers: request.headers) ??
+        Options(headers: request.headers);
+
+    try {
+      final response = await _dio.download(request.url, savePath,
+          options: request.needLogin ? options : null);
+
+      return _buildResponse(response, request);
+    } on DioException catch (e) {
+      throw RDNetError(
+        code: e.response?.statusCode ?? -1,
+        message: e.message,
+        response: _buildResponse(e.response, request),
+        stackTrace: e.stackTrace,
+      );
+    }
+  }
 }
