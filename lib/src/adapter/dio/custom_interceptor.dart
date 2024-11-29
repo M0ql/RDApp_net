@@ -19,7 +19,6 @@ class CustomInterceptor extends Interceptor {
       _pendingRequests.add((options: options, handler: handler));
       return;
     }
-    _addToken(options);
     return handler.next(options);
   }
 

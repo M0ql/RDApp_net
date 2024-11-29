@@ -27,14 +27,18 @@ class DioAdapter implements RDAdapter {
     final accessToken = RDNet.accessToken();
     final isLogin = accessToken != null && accessToken.isNotEmpty;
 
-    if (request.needLogin && !isLogin) {
-      throw NeedLoginError(
-          response: RDNetResponse(
-              statusCode: 401, request: request, message: 'Not signed in.'));
-    }
-
     final options = request.options?.copyWith(headers: request.headers) ??
         Options(headers: request.headers);
+
+    if (request.needLogin) {
+      if (!isLogin) {
+        throw NeedLoginError(
+            response: RDNetResponse(
+                statusCode: 401, request: request, message: 'Not signed in.'));
+      } else {
+        _addToken(options);
+      }
+    }
 
     try {
       final response = switch (request.httpMethod) {
@@ -74,32 +78,11 @@ class DioAdapter implements RDAdapter {
         data: response?.data,
       );
 
-  @override
-  Future<RDNetResponse> download(RDBaseRequest request, String savePath) async {
-    final accessToken = RDNet.accessToken();
-    final isLogin = accessToken != null && accessToken.isNotEmpty;
-
-    if (request.needLogin && !isLogin) {
-      throw NeedLoginError(
-          response: RDNetResponse(
-              statusCode: 401, request: request, message: 'Not signed in.'));
-    }
-
-    final options = request.options?.copyWith(headers: request.headers) ??
-        Options(headers: request.headers);
-
-    try {
-      final response = await _dio.download(request.url, savePath,
-          options: request.needLogin ? options : null);
-
-      return _buildResponse(response, request);
-    } on DioException catch (e) {
-      throw RDNetError(
-        code: e.response?.statusCode ?? -1,
-        message: e.message,
-        response: _buildResponse(e.response, request),
-        stackTrace: e.stackTrace,
-      );
-    }
+  void _addToken(Options options) {
+    (options.headers ??= {}).addAll({
+      'Ratingdog.TenantId': RDNet.tenantId() ?? 1,
+      'User-Agent': RDNet.userAgent,
+      'Authorization': 'Bearer ${RDNet.accessToken()}'
+    });
   }
 }
