@@ -27,7 +27,8 @@ class RDNet {
       required ValueGetter<int?> tenantId,
       required String apiBaseUrl,
       required String authBaseUrl,
-      required ValueGetter<String?> userAgent}) {
+      required ValueGetter<String?> userAgent,
+      required ValueGetter<Set<String>> permission}) {
     _instance = RDNet._();
     RDNet.onNeedLoginError = onNeedLoginError;
     RDNet.onRefreshToken = onRefreshToken;
@@ -36,6 +37,7 @@ class RDNet {
     RDNet.authBaseUrl = authBaseUrl;
     RDNet.tenantId = tenantId;
     RDNet.userAgent = userAgent;
+    RDNet.permission = permission;
   }
 
   static late final VoidCallback onNeedLoginError;
@@ -51,6 +53,8 @@ class RDNet {
   static late final ValueGetter<int?> tenantId;
 
   static late final ValueGetter<String?> userAgent;
+
+  static late final ValueGetter<Set<String>> permission;
 
   Future fire(RDBaseRequest request) async {
     RDNetResponse response;

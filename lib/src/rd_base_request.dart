@@ -52,6 +52,8 @@ abstract class RDBaseRequest {
 
   bool get needLogin;
 
+  Set<String>? get permission => null;
+
   var params = <String, Object?>{};
 
   RDBaseRequest addParam(String k, Object? v) {
