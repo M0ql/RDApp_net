@@ -54,7 +54,7 @@ class RDNet {
 
   static late final ValueGetter<String?> userAgent;
 
-  static late final ValueGetter<Set<String>> permission;
+  static late final ValueGetter<Set<String>?> permission;
 
   Future fire(RDBaseRequest request) async {
     RDNetResponse response;

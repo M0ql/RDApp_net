@@ -38,7 +38,7 @@ class DioAdapter implements RDAdapter {
       } else {
         if (request.permission != null && request.permission!.isNotEmpty) {
           final hasPermission =
-              RDNet.permission().containsAll(request.permission!);
+              RDNet.permission()!.containsAll(request.permission!);
           if (hasPermission) {
             _addToken(options);
           } else {
