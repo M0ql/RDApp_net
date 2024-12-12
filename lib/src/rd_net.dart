@@ -28,7 +28,7 @@ class RDNet {
       required String apiBaseUrl,
       required String authBaseUrl,
       required ValueGetter<String?> userAgent,
-      required ValueGetter<Set<String>> permission}) {
+      required ValueGetter<Set<String>?> permission}) {
     _instance = RDNet._();
     RDNet.onNeedLoginError = onNeedLoginError;
     RDNet.onRefreshToken = onRefreshToken;
