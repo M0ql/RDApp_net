@@ -48,6 +48,8 @@ class DioAdapter implements RDAdapter {
                     request: request,
                     message: 'No permission.'));
           }
+        } else {
+          _addToken(options);
         }
       }
     }
