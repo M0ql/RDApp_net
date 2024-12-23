@@ -54,6 +54,8 @@ class DioAdapter implements RDAdapter {
       }
     }
 
+    _addBaseHeaders(options);
+
     try {
       final response = switch (request.httpMethod) {
         HttpMethod.get => await _dio.get(request.url,
@@ -95,6 +97,10 @@ class DioAdapter implements RDAdapter {
   void _addToken(Options options) {
     options.headers ??= <String, String>{};
     options.headers!['Ratingdog.TenantId'] = (RDNet.tenantId() ?? 1).toString();
+  }
+
+  void _addBaseHeaders(Options options) {
+    options.headers ??= <String, String>{};
     options.headers!['User-Agent'] = RDNet.userAgent();
     options.headers!['Authorization'] = 'Bearer ${RDNet.accessToken()}';
   }
