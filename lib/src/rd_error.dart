@@ -5,7 +5,7 @@ class RDNetError<T> implements Exception {
 
   final String? message;
 
-  final RDNetResponse response;
+  final RDNetResponse? response;
 
   final StackTrace? stackTrace;
 

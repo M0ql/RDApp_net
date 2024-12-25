@@ -57,7 +57,7 @@ class RDNet {
   static late final ValueGetter<Set<String>?> permission;
 
   Future fire(RDBaseRequest request) async {
-    RDNetResponse response;
+    RDNetResponse? response;
 
     StackTrace? stackTrace;
 
@@ -83,7 +83,7 @@ class RDNet {
       rethrow;
     }
 
-    final result = response.data;
+    final result = response?.data;
 
     switch (code) {
       case 200:
