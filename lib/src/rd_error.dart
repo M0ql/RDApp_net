@@ -1,4 +1,4 @@
-import 'package:rd_app_net/src/adapter/rd_adapter.dart';
+import 'package:rd_app_net/src/adapters/rd_adapter.dart';
 
 class RDNetError<T> implements Exception {
   final int code;

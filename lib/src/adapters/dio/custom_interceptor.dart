@@ -52,7 +52,7 @@ class CustomInterceptor extends Interceptor {
       _duringRetrying = true;
 
       for (final request in _pendingRequests) {
-        _addToken(request.options);
+        _addHeaders(request.options);
         try {
           final responseOfRequest = await _dio.fetch(request.options);
           request.handler.resolve(responseOfRequest);
@@ -73,7 +73,7 @@ class CustomInterceptor extends Interceptor {
         _pendingRequests.remove(request);
       }
 
-      _addToken(requestOptions);
+      _addHeaders(requestOptions);
       try {
         final response = await _dio.fetch(requestOptions);
         return handler.resolve(response);
@@ -86,7 +86,7 @@ class CustomInterceptor extends Interceptor {
     return handler.next(err);
   }
 
-  void _addToken(RequestOptions options) {
+  void _addHeaders(RequestOptions options) {
     options.headers['Ratingdog.TenantId'] = RDNet.tenantId() ?? 1;
     options.headers['User-Agent'] = RDNet.userAgent();
     options.headers['Authorization'] = 'Bearer ${RDNet.accessToken()}';

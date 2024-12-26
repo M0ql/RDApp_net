@@ -3,8 +3,8 @@ import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:rd_app_net/src/rd_error.dart';
 
-import 'adapter/dio/dio_adapter.dart';
-import 'adapter/rd_adapter.dart';
+import 'adapters/dio/dio_adapter.dart';
+import 'adapters/rd_adapter.dart';
 import 'rd_base_request.dart';
 
 class RDNet {

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:rd_app_net/rd_app_net.dart';
+import 'package:rd_app_net/src/extensions/iterable_extension.dart';
 
 enum HttpMethod {
   get,
@@ -63,9 +64,9 @@ abstract class RDBaseRequest {
   }
 
   RDBaseRequest addAllParams(Map<String, Object?> params) {
-    params.removeWhere((key, value) => value == null);
-
-    this.params.addAll(params);
+    this.params.addAll(params.entries
+        .where((entry) => entry.value != null && entry.value != '')
+        .toMap());
 
     return this;
   }
