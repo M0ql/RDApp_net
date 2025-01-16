@@ -38,7 +38,6 @@ class CustomInterceptor extends Interceptor {
       _needRefresh = true;
       try {
         await RDNet.onRefreshToken();
-        _needRefresh = false;
       } on DioException {
         for (final request in _pendingRequests) {
           request.handler.reject(DioException(
@@ -46,6 +45,8 @@ class CustomInterceptor extends Interceptor {
         }
         _pendingRequests.clear();
         return handler.next(err);
+      } finally {
+        _needRefresh = false;
       }
 
       final removableRequest = [];
