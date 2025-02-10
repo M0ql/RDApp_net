@@ -106,7 +106,7 @@ class RDNet {
         throw RDNetError(
             code: code,
             message: message,
-            response: result,
+            response: response,
             stackTrace: stackTrace);
     }
   }
