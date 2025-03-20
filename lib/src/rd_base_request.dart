@@ -27,7 +27,7 @@ abstract class RDBaseRequest {
 
   String get path;
 
-  String get _baseUrl => toAuth ? _authBaseUrl : _apiBaseUrl;
+  String get _baseUrl => toAuth ? _authBaseUrl() : _apiBaseUrl();
 
   String get url {
     Uri uri;

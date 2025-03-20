@@ -25,8 +25,8 @@ class RDNet {
       required AsyncCallback onRefreshToken,
       required ValueGetter<String?> accessToken,
       required ValueGetter<int?> tenantId,
-      required String apiBaseUrl,
-      required String authBaseUrl,
+      required ValueGetter<String> apiBaseUrl,
+      required ValueGetter<String> authBaseUrl,
       required ValueGetter<String?> userAgent,
       required ValueGetter<Set<String>?> permission}) {
     _instance = RDNet._();
@@ -46,9 +46,9 @@ class RDNet {
 
   static late final ValueGetter<String?> accessToken;
 
-  static late final String apiBaseUrl;
+  static late final ValueGetter<String> apiBaseUrl;
 
-  static late final String authBaseUrl;
+  static late final ValueGetter<String> authBaseUrl;
 
   static late final ValueGetter<int?> tenantId;
 
