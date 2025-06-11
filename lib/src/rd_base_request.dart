@@ -55,16 +55,16 @@ abstract class RDBaseRequest {
 
   Set<String>? get permission => null;
 
-  var params = <String, Object?>{};
+  dynamic params = <String, Object?>{};
 
   RDBaseRequest addParam(String k, Object? v) {
-    if (v != null) params[k] = v;
+    if (v != null) (params as Map<String, Object?>)[k] = v;
 
     return this;
   }
 
   RDBaseRequest addAllParams(Map<String, Object?> params) {
-    this.params.addAll(params.entries
+    (this.params as Map<String, Object?>).addAll(params.entries
         .where((entry) => entry.value != null && entry.value != '')
         .toMap());
 
