@@ -13,6 +13,7 @@ class DioAdapter implements RDAdapter {
       PrettyDioLogger(
         requestBody: true,
         requestHeader: false,
+        enabled: RDNet.logEnabled,
       ),
       CustomInterceptor(_dio),
     ]);
