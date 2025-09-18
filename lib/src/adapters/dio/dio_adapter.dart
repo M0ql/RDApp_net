@@ -14,6 +14,9 @@ class DioAdapter implements RDAdapter {
         requestBody: true,
         requestHeader: false,
         enabled: RDNet.logEnabled,
+        filter: RDNet.logFilter == null
+            ? null
+            : (options, filterArgs) => RDNet.logFilter!(options.path),
       ),
       CustomInterceptor(_dio),
     ]);
