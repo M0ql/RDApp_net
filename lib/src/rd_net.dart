@@ -30,7 +30,7 @@ class RDNet {
       required ValueGetter<String?> userAgent,
       required ValueGetter<Set<String>?> permission,
       bool logEnabled = kDebugMode,
-      bool Function(String path)? logFilter}) {
+      bool Function(String url)? logFilter}) {
     _instance = RDNet._();
     RDNet.onNeedLoginError = onNeedLoginError;
     RDNet.onRefreshToken = onRefreshToken;
