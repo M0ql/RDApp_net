@@ -76,6 +76,11 @@ class DioAdapter implements RDAdapter {
             cancelToken: RDBaseRequest.cancelToken,
             queryParameters: request.params,
             data: request.params),
+        HttpMethod.put => await _dio.put(request.url,
+            options: options,
+            cancelToken: RDBaseRequest.cancelToken,
+            queryParameters: request.params,
+            data: request.params),
       };
 
       return _buildResponse(response, request);

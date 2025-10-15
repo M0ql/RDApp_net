@@ -6,6 +6,7 @@ enum HttpMethod {
   get,
   post,
   delete,
+  put,
 }
 
 abstract class RDBaseRequest {
