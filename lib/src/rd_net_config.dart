@@ -5,15 +5,25 @@ import 'rd_error.dart';
 
 /// RDNet 配置类
 class RDNetConfig {
-  /// 错误回调
+  /// 需要登录回调
+  ///
+  /// 当遇到 401 未登录错误时调用，用于显示登录弹窗并等待用户操作
+  /// - 返回 `true` 表示登录成功，框架会自动重试请求
+  /// - 返回 `false` 表示用户取消登录，框架会抛出 [NotSignedInError]
+  ///
+  /// 注意：如果多个请求同时返回 401，只会调用一次此回调，
+  /// 其他请求会等待这次登录的结果
+  final Future<bool> Function() onNeedLogin;
+
+  /// 错误回调（可选）
   ///
   /// 当发生网络错误时调用，可以根据错误类型进行不同的处理：
-  /// - [NeedSignInError] 401 未登录
-  /// - [NeedAuthError] 403 权限不足
+  /// - [NotSignedInError] 401 未登录（仅在用户取消登录时触发）
+  /// - [NoAuthError] 403 权限不足
   /// - [ServerError] 500 服务器错误
   /// - [ParamsError] 400 参数错误
   /// - [RDNetError] 其他网络错误
-  final void Function(RDNetError error) onError;
+  final void Function(RDNetError error)? onError;
 
   /// 刷新 token 回调
   final AsyncCallback onRefreshToken;
@@ -46,7 +56,8 @@ class RDNetConfig {
   final bool Function(String url)? logFilter;
 
   const RDNetConfig({
-    required this.onError,
+    required this.onNeedLogin,
+    this.onError,
     required this.onRefreshToken,
     required this.accessToken,
     required this.tenantId,
@@ -61,6 +72,7 @@ class RDNetConfig {
 
   /// 创建配置的副本，支持部分更新
   RDNetConfig copyWith({
+    Future<bool> Function()? onNeedLogin,
     void Function(RDNetError error)? onError,
     AsyncCallback? onRefreshToken,
     ValueGetter<String?>? accessToken,
@@ -74,6 +86,7 @@ class RDNetConfig {
     bool Function(String url)? logFilter,
   }) {
     return RDNetConfig(
+      onNeedLogin: onNeedLogin ?? this.onNeedLogin,
       onError: onError ?? this.onError,
       onRefreshToken: onRefreshToken ?? this.onRefreshToken,
       accessToken: accessToken ?? this.accessToken,

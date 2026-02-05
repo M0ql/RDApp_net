@@ -35,9 +35,10 @@ class DioAdapter implements RDAdapter {
 
     if (request.needLogin) {
       if (!isLogin) {
-        throw NeedSignInError(
-            response: RDNetResponse(
-                statusCode: 401, request: request, message: 'Not signed in.'));
+        throw NotSignedInError(
+          response: RDNetResponse(
+              statusCode: 401, request: request, message: 'Not signed in.'),
+        );
       } else {
         if (request.permission != null && request.permission!.isNotEmpty) {
           final hasPermission =
@@ -45,7 +46,7 @@ class DioAdapter implements RDAdapter {
           if (hasPermission) {
             _addToken(options);
           } else {
-            throw NeedAuthError(
+            throw NoAuthError(
                 response: RDNetResponse(
                     statusCode: 403,
                     request: request,

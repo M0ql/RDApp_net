@@ -16,16 +16,16 @@ class RDNetError<T> implements Exception {
       this.stackTrace});
 }
 
-class NeedSignInError extends RDNetError {
-  NeedSignInError(
+class NotSignedInError extends RDNetError {
+  NotSignedInError(
       {super.code = 401,
       super.message = '未登录',
       super.stackTrace,
       required super.response});
 }
 
-class NeedAuthError<T> extends RDNetError<T> {
-  NeedAuthError(
+class NoAuthError<T> extends RDNetError<T> {
+  NoAuthError(
       {super.code = 403,
       super.message,
       required super.response,
