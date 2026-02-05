@@ -137,7 +137,7 @@ class RDNet {
 
     try {
       // 调用用户配置的登录回调
-      final loginSuccess = await _config.onNeedLogin();
+      final loginSuccess = await _config.onNeedSignIn();
 
       // 通知所有等待的请求
       for (final completer in _pendingRequests) {

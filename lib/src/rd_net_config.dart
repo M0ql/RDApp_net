@@ -13,7 +13,7 @@ class RDNetConfig {
   ///
   /// 注意：如果多个请求同时返回 401，只会调用一次此回调，
   /// 其他请求会等待这次登录的结果
-  final Future<bool> Function() onNeedLogin;
+  final Future<bool> Function() onNeedSignIn;
 
   /// 错误回调（可选）
   ///
@@ -56,7 +56,7 @@ class RDNetConfig {
   final bool Function(String url)? logFilter;
 
   const RDNetConfig({
-    required this.onNeedLogin,
+    required this.onNeedSignIn,
     this.onError,
     required this.onRefreshToken,
     required this.accessToken,
@@ -86,7 +86,7 @@ class RDNetConfig {
     bool Function(String url)? logFilter,
   }) {
     return RDNetConfig(
-      onNeedLogin: onNeedLogin ?? this.onNeedLogin,
+      onNeedSignIn: onNeedLogin ?? this.onNeedSignIn,
       onError: onError ?? this.onError,
       onRefreshToken: onRefreshToken ?? this.onRefreshToken,
       accessToken: accessToken ?? this.accessToken,
