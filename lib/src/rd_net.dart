@@ -3,89 +3,79 @@ import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:rd_app_net/src/rd_error.dart';
 
-import 'adapters/dio/dio_adapter.dart';
 import 'adapters/rd_adapter.dart';
 import 'rd_base_request.dart';
+import 'rd_net_config.dart';
 
+/// RDNet 网络请求管理类
+/// 提供统一的网络请求接口
 class RDNet {
-  RDNet._();
+  RDNet._(this._config);
 
-  static late final RDNet _instance;
+  static RDNet? _instance;
+
+  final RDNetConfig _config;
 
   factory RDNet() {
-    try {
-      return _instance;
-    } catch (e) {
-      throw Exception('RDNet uninitialized');
+    final instance = _instance;
+    if (instance == null) {
+      throw StateError(
+        'RDNet has not been initialized. '
+        'Please call RDNet.init() before using RDNet()',
+      );
     }
+    return instance;
   }
 
-  static void init(
-      {required VoidCallback onNeedLoginError,
-      required AsyncCallback onRefreshToken,
-      required ValueGetter<String?> accessToken,
-      required ValueGetter<int?> tenantId,
-      required ValueGetter<String> apiBaseUrl,
-      required ValueGetter<String> authBaseUrl,
-      required ValueGetter<String?> userAgent,
-      required ValueGetter<Set<String>?> permission,
-      bool logEnabled = kDebugMode,
-      bool Function(String url)? logFilter}) {
-    _instance = RDNet._();
-    RDNet.onNeedLoginError = onNeedLoginError;
-    RDNet.onRefreshToken = onRefreshToken;
-    RDNet.accessToken = accessToken;
-    RDNet.apiBaseUrl = apiBaseUrl;
-    RDNet.authBaseUrl = authBaseUrl;
-    RDNet.tenantId = tenantId;
-    RDNet.userAgent = userAgent;
-    RDNet.permission = permission;
-    RDNet.logEnabled = logEnabled;
-    RDNet.logFilter = logFilter;
+  static void init({
+    required RDNetConfig config,
+  }) {
+    _instance = RDNet._(config);
   }
 
-  static late final VoidCallback onNeedLoginError;
+  /// 重置单例（主要用于测试）
+  @visibleForTesting
+  static void reset() {
+    _instance = null;
+  }
 
-  static late final AsyncCallback onRefreshToken;
+  RDNetConfig get config => _config;
 
-  static late final ValueGetter<String?> accessToken;
+  VoidCallback get onNeedLoginError => _config.onNeedLoginError;
+  AsyncCallback get onRefreshToken => _config.onRefreshToken;
+  ValueGetter<String?> get accessToken => _config.accessToken;
+  ValueGetter<String> get apiBaseUrl => _config.apiBaseUrl;
+  ValueGetter<String> get authBaseUrl => _config.authBaseUrl;
+  ValueGetter<int?> get tenantId => _config.tenantId;
+  ValueGetter<String?> get userAgent => _config.userAgent;
+  ValueGetter<Set<String>?> get permission => _config.permission;
+  bool get logEnabled => _config.logEnabled;
+  bool Function(String url)? get logFilter => _config.logFilter;
 
-  static late final ValueGetter<String> apiBaseUrl;
-
-  static late final ValueGetter<String> authBaseUrl;
-
-  static late final ValueGetter<int?> tenantId;
-
-  static late final ValueGetter<String?> userAgent;
-
-  static late final ValueGetter<Set<String>?> permission;
-
-  static late final bool logEnabled;
-
-  static Function(String path)? logFilter;
-
-  Future fire(RDBaseRequest request) async {
+  /// 发起网络请求
+  ///
+  /// [request] 请求对象
+  /// 返回响应数据
+  ///
+  /// 异常：
+  /// - [NeedLoginError] 401 需要登录
+  /// - [NeedAuthError] 403 权限不足
+  /// - [ServerError] 500 服务器错误
+  /// - [RDNetError] 其他网络错误
+  Future<dynamic> fire(RDBaseRequest request) async {
     RDNetResponse? response;
-
     StackTrace? stackTrace;
-
     String? message;
-
     int code;
 
     try {
-      response = await DioAdapter().send(request);
-
+      response = await _config.adapter.send(request);
       code = response.statusCode;
-
       message = response.message;
     } on RDNetError catch (e) {
       response = e.response;
-
       code = e.code;
-
       stackTrace = e.stackTrace;
-
       message = e.message;
     } catch (e) {
       rethrow;
@@ -93,29 +83,57 @@ class RDNet {
 
     final result = response?.data;
 
+    // 根据状态码处理响应
+    return _handleResponse(
+      code: code,
+      result: result,
+      response: response,
+      message: message,
+      stackTrace: stackTrace,
+    );
+  }
+
+  /// 处理响应
+  dynamic _handleResponse({
+    required int code,
+    required dynamic result,
+    required RDNetResponse? response,
+    required String? message,
+    required StackTrace? stackTrace,
+  }) {
     switch (code) {
       case 200:
         return result;
 
       case 401:
-        onNeedLoginError();
+        _config.onNeedLoginError();
         throw NeedLoginError(
-            stackTrace: stackTrace, response: response, message: message);
+          stackTrace: stackTrace,
+          response: response,
+          message: message,
+        );
 
       case 403:
         throw NeedAuthError(
-            response: response, stackTrace: stackTrace, message: message);
+          response: response,
+          stackTrace: stackTrace,
+          message: message,
+        );
 
       case 500:
         throw ServerError(
-            response: response, stackTrace: stackTrace, message: message);
+          response: response,
+          stackTrace: stackTrace,
+          message: message,
+        );
 
       default:
         throw RDNetError(
-            code: code,
-            message: message,
-            response: response,
-            stackTrace: stackTrace);
+          code: code,
+          message: message,
+          response: response,
+          stackTrace: stackTrace,
+        );
     }
   }
 }

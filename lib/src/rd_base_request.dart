@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:rd_app_net/rd_app_net.dart';
 import 'package:rd_app_net/src/extensions/iterable_extension.dart';
 
@@ -10,9 +11,9 @@ enum HttpMethod {
 }
 
 abstract class RDBaseRequest {
-  final _apiBaseUrl = RDNet.apiBaseUrl;
+  ValueGetter<String> get _apiBaseUrl => RDNet().apiBaseUrl;
 
-  final _authBaseUrl = RDNet.authBaseUrl;
+  ValueGetter<String> get _authBaseUrl => RDNet().authBaseUrl;
 
   String? pathParams;
 

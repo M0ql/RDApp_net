@@ -3,7 +3,6 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:rd_app_net/src/adapters/dio/custom_interceptor.dart';
 
 import '../../../rd_app_net.dart';
-import '../rd_adapter.dart';
 
 class DioAdapter implements RDAdapter {
   final Dio _dio;
@@ -13,10 +12,10 @@ class DioAdapter implements RDAdapter {
       PrettyDioLogger(
         requestBody: true,
         requestHeader: false,
-        enabled: RDNet.logEnabled,
-        filter: RDNet.logFilter == null
+        enabled: RDNet().logEnabled,
+        filter: RDNet().logFilter == null
             ? null
-            : (options, filterArgs) => RDNet.logFilter!(options.path),
+            : (options, filterArgs) => RDNet().logFilter!(options.path),
       ),
       CustomInterceptor(_dio),
     ]);
@@ -28,7 +27,7 @@ class DioAdapter implements RDAdapter {
 
   @override
   Future<RDNetResponse> send(RDBaseRequest request) async {
-    final accessToken = RDNet.accessToken();
+    final accessToken = RDNet().accessToken();
     final isLogin = accessToken != null && accessToken.isNotEmpty;
 
     final options = request.options?.copyWith(headers: request.headers) ??
@@ -42,7 +41,7 @@ class DioAdapter implements RDAdapter {
       } else {
         if (request.permission != null && request.permission!.isNotEmpty) {
           final hasPermission =
-              RDNet.permission()!.containsAll(request.permission!);
+              RDNet().permission()!.containsAll(request.permission!);
           if (hasPermission) {
             _addToken(options);
           } else {
@@ -105,12 +104,13 @@ class DioAdapter implements RDAdapter {
 
   void _addToken(Options options) {
     options.headers ??= <String, String>{};
-    options.headers!['Authorization'] = 'Bearer ${RDNet.accessToken()}';
+    options.headers!['Authorization'] = 'Bearer ${RDNet().accessToken()}';
   }
 
   void _addBaseHeaders(Options options) {
     options.headers ??= <String, String>{};
-    options.headers!['Ratingdog.TenantId'] = (RDNet.tenantId() ?? 1).toString();
-    options.headers!['User-Agent'] = RDNet.userAgent();
+    options.headers!['Ratingdog.TenantId'] =
+        (RDNet().tenantId() ?? 1).toString();
+    options.headers!['User-Agent'] = RDNet().userAgent();
   }
 }

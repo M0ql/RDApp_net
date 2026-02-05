@@ -37,7 +37,7 @@ class CustomInterceptor extends Interceptor {
       }
       _needRefresh = true;
       try {
-        await RDNet.onRefreshToken();
+        await RDNet().onRefreshToken();
       } on DioException {
         for (final request in _pendingRequests) {
           request.handler.reject(DioException(
@@ -88,8 +88,8 @@ class CustomInterceptor extends Interceptor {
   }
 
   void _addHeaders(RequestOptions options) {
-    options.headers['Ratingdog.TenantId'] = RDNet.tenantId() ?? 1;
-    options.headers['User-Agent'] = RDNet.userAgent();
-    options.headers['Authorization'] = 'Bearer ${RDNet.accessToken()}';
+    options.headers['Ratingdog.TenantId'] = RDNet().tenantId() ?? 1;
+    options.headers['User-Agent'] = RDNet().userAgent();
+    options.headers['Authorization'] = 'Bearer ${RDNet().accessToken()}';
   }
 }
