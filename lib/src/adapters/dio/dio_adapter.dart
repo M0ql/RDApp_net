@@ -28,13 +28,13 @@ class DioAdapter implements RDAdapter {
   @override
   Future<RDNetResponse> send(RDBaseRequest request) async {
     final accessToken = RDNet().accessToken();
-    final isLogin = accessToken != null && accessToken.isNotEmpty;
+    final isSignedIn = accessToken != null && accessToken.isNotEmpty;
 
     final options = request.options?.copyWith(headers: request.headers) ??
         Options(headers: request.headers);
 
     if (request.needLogin) {
-      if (!isLogin) {
+      if (!isSignedIn) {
         throw NotSignedInError(
           response: RDNetResponse(
               statusCode: 401, request: request, message: 'Not signed in.'),

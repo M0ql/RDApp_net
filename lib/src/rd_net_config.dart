@@ -72,7 +72,7 @@ class RDNetConfig {
 
   /// 创建配置的副本，支持部分更新
   RDNetConfig copyWith({
-    Future<bool> Function()? onNeedLogin,
+    Future<bool> Function()? onNeedSignIn,
     void Function(RDNetError error)? onError,
     AsyncCallback? onRefreshToken,
     ValueGetter<String?>? accessToken,
@@ -86,7 +86,7 @@ class RDNetConfig {
     bool Function(String url)? logFilter,
   }) {
     return RDNetConfig(
-      onNeedSignIn: onNeedLogin ?? this.onNeedSignIn,
+      onNeedSignIn: onNeedSignIn ?? this.onNeedSignIn,
       onError: onError ?? this.onError,
       onRefreshToken: onRefreshToken ?? this.onRefreshToken,
       accessToken: accessToken ?? this.accessToken,

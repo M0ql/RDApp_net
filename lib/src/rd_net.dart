@@ -95,7 +95,7 @@ class RDNet {
 
     // 特殊处理 401：尝试登录后重试
     if (code == 401 && retryCount == 0) {
-      final shouldRetry = await _handleNeedLogin();
+      final shouldRetry = await _handleNeedSignIn();
       if (shouldRetry) {
         // 登录成功，重试请求
         return _fireInternal(request, retryCount: 1);
@@ -124,7 +124,7 @@ class RDNet {
   /// 处理需要登录的情况
   ///
   /// 返回 true 表示登录成功，false 表示用户取消
-  Future<bool> _handleNeedLogin() async {
+  Future<bool> _handleNeedSignIn() async {
     // 如果已经在登录中，加入等待队列
     if (_isSigningIn) {
       final completer = Completer<bool>();
@@ -137,17 +137,17 @@ class RDNet {
 
     try {
       // 调用用户配置的登录回调
-      final loginSuccess = await _config.onNeedSignIn();
+      final signInSuccess = await _config.onNeedSignIn();
 
       // 通知所有等待的请求
       for (final completer in _pendingRequests) {
         if (!completer.isCompleted) {
-          completer.complete(loginSuccess);
+          completer.complete(signInSuccess);
         }
       }
       _pendingRequests.clear();
 
-      return loginSuccess;
+      return signInSuccess;
     } catch (e) {
       // 登录过程出错，通知所有等待的请求失败
       for (final completer in _pendingRequests) {
