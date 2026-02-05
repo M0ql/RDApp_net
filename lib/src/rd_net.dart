@@ -33,15 +33,9 @@ class RDNet {
     _instance = RDNet._(config);
   }
 
-  /// 重置单例（主要用于测试）
-  @visibleForTesting
-  static void reset() {
-    _instance = null;
-  }
-
   RDNetConfig get config => _config;
 
-  VoidCallback get onNeedLoginError => _config.onNeedLoginError;
+  void Function(RDNetError error) get onError => _config.onError;
   AsyncCallback get onRefreshToken => _config.onRefreshToken;
   ValueGetter<String?> get accessToken => _config.accessToken;
   ValueGetter<String> get apiBaseUrl => _config.apiBaseUrl;
@@ -58,7 +52,7 @@ class RDNet {
   /// 返回响应数据
   ///
   /// 异常：
-  /// - [NeedLoginError] 401 需要登录
+  /// - [NeedSignInError] 401 需要登录
   /// - [NeedAuthError] 403 权限不足
   /// - [ServerError] 500 服务器错误
   /// - [RDNetError] 其他网络错误
@@ -106,34 +100,41 @@ class RDNet {
         return result;
 
       case 401:
-        _config.onNeedLoginError();
-        throw NeedLoginError(
+        final error = NeedSignInError(
           stackTrace: stackTrace,
           response: response,
           message: message,
         );
+        _config.onError(error);
+        throw error;
 
       case 403:
-        throw NeedAuthError(
+        final error = NeedAuthError(
           response: response,
           stackTrace: stackTrace,
           message: message,
         );
+        _config.onError(error);
+        throw error;
 
       case 500:
-        throw ServerError(
+        final error = ServerError(
           response: response,
           stackTrace: stackTrace,
           message: message,
         );
+        _config.onError(error);
+        throw error;
 
       default:
-        throw RDNetError(
+        final error = RDNetError(
           code: code,
           message: message,
           response: response,
           stackTrace: stackTrace,
         );
+        _config.onError(error);
+        throw error;
     }
   }
 }

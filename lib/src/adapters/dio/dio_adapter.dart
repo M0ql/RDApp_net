@@ -35,7 +35,7 @@ class DioAdapter implements RDAdapter {
 
     if (request.needLogin) {
       if (!isLogin) {
-        throw NeedLoginError(
+        throw NeedSignInError(
             response: RDNetResponse(
                 statusCode: 401, request: request, message: 'Not signed in.'));
       } else {

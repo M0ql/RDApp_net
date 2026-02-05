@@ -1,11 +1,19 @@
 import 'package:flutter/foundation.dart';
 
 import 'adapters/rd_adapter.dart';
+import 'rd_error.dart';
 
 /// RDNet 配置类
 class RDNetConfig {
-  /// 需要登录错误回调
-  final VoidCallback onNeedLoginError;
+  /// 错误回调
+  ///
+  /// 当发生网络错误时调用，可以根据错误类型进行不同的处理：
+  /// - [NeedSignInError] 401 未登录
+  /// - [NeedAuthError] 403 权限不足
+  /// - [ServerError] 500 服务器错误
+  /// - [ParamsError] 400 参数错误
+  /// - [RDNetError] 其他网络错误
+  final void Function(RDNetError error) onError;
 
   /// 刷新 token 回调
   final AsyncCallback onRefreshToken;
@@ -38,7 +46,7 @@ class RDNetConfig {
   final bool Function(String url)? logFilter;
 
   const RDNetConfig({
-    required this.onNeedLoginError,
+    required this.onError,
     required this.onRefreshToken,
     required this.accessToken,
     required this.tenantId,
@@ -51,8 +59,9 @@ class RDNetConfig {
     this.logFilter,
   });
 
+  /// 创建配置的副本，支持部分更新
   RDNetConfig copyWith({
-    VoidCallback? onNeedLoginError,
+    void Function(RDNetError error)? onError,
     AsyncCallback? onRefreshToken,
     ValueGetter<String?>? accessToken,
     ValueGetter<int?>? tenantId,
@@ -65,7 +74,7 @@ class RDNetConfig {
     bool Function(String url)? logFilter,
   }) {
     return RDNetConfig(
-      onNeedLoginError: onNeedLoginError ?? this.onNeedLoginError,
+      onError: onError ?? this.onError,
       onRefreshToken: onRefreshToken ?? this.onRefreshToken,
       accessToken: accessToken ?? this.accessToken,
       tenantId: tenantId ?? this.tenantId,

@@ -16,8 +16,8 @@ class RDNetError<T> implements Exception {
       this.stackTrace});
 }
 
-class NeedLoginError extends RDNetError {
-  NeedLoginError(
+class NeedSignInError extends RDNetError {
+  NeedSignInError(
       {super.code = 401,
       super.message = '未登录',
       super.stackTrace,
