@@ -28,8 +28,6 @@ class RDNetResponse<T> {
 
   @override
   String toString() {
-    // TODO: implement toString
-
     if (data is Map) {
       return jsonEncode(data);
     } else {

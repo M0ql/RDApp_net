@@ -2,11 +2,8 @@ import 'dart:async';
 import 'dart:core';
 
 import 'package:flutter/foundation.dart';
-import 'package:rd_app_net/src/rd_error.dart';
 
-import 'adapters/rd_adapter.dart';
-import 'rd_base_request.dart';
-import 'rd_net_config.dart';
+import '../rd_app_net.dart';
 
 /// RDNet 网络请求管理类
 /// 提供统一的网络请求接口
@@ -79,7 +76,7 @@ class RDNet {
     int code;
 
     try {
-      response = await _config.adapter.send(request);
+      response = await DioAdapter().send(request);
       code = response.statusCode;
       message = response.message;
     } on RDNetError catch (e) {

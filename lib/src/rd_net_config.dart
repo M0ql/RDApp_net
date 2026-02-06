@@ -46,9 +46,6 @@ class RDNetConfig {
   /// 获取权限集合
   final ValueGetter<Set<String>?> permission;
 
-  /// 网络适配器
-  final RDAdapter adapter;
-
   /// 是否启用日志
   final bool logEnabled;
 
@@ -65,7 +62,6 @@ class RDNetConfig {
     required this.authBaseUrl,
     required this.userAgent,
     required this.permission,
-    required this.adapter,
     this.logEnabled = kDebugMode,
     this.logFilter,
   });
@@ -95,7 +91,6 @@ class RDNetConfig {
       authBaseUrl: authBaseUrl ?? this.authBaseUrl,
       userAgent: userAgent ?? this.userAgent,
       permission: permission ?? this.permission,
-      adapter: adapter ?? this.adapter,
       logEnabled: logEnabled ?? this.logEnabled,
       logFilter: logFilter ?? this.logFilter,
     );
