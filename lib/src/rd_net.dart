@@ -171,6 +171,7 @@ class RDNet {
   }) {
     switch (code) {
       case 200:
+      case 202:
         return result;
 
       case 401:
