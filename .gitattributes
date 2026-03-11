@@ -1,0 +1,20 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# ==================================================
+# Dart / Flutter
+# ==================================================
+
+*.dart text eol=lf
+*.arb  text eol=lf
+
+# ==================================================
+# Config / Data
+# ==================================================
+
+*.yaml text eol=lf
+*.yml  text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
