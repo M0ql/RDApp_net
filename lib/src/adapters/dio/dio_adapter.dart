@@ -112,6 +112,8 @@ class DioAdapter implements RDAdapter {
     options.headers ??= <String, String>{};
     options.headers!['Ratingdog.TenantId'] =
         (RDNet().tenantId() ?? 1).toString();
-    options.headers!['User-Agent'] = RDNet().userAgent();
+    if (!identical(0, 0.0)) {
+      options.headers!['User-Agent'] = RDNet().userAgent();
+    }
   }
 }
