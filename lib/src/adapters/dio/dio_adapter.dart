@@ -32,7 +32,13 @@ class DioAdapter implements RDAdapter {
   Future<RDNetResponse> send(RDBaseRequest request) async {
     final connectivityResults = await Connectivity().checkConnectivity();
     if (connectivityResults.every((r) => r == ConnectivityResult.none)) {
-      throw NoNetworkError();
+      throw NoNetworkError(
+        response: RDNetResponse(
+          statusCode: -2,
+          request: request,
+          message: '无网络连接',
+        ),
+      );
     }
 
     final accessToken = RDNet().accessToken();
@@ -98,6 +104,7 @@ class DioAdapter implements RDAdapter {
         throw NoNetworkError(
           message: e.message,
           stackTrace: e.stackTrace,
+          response: _buildResponse(e.response, request),
         );
       }
       throw RDNetError(

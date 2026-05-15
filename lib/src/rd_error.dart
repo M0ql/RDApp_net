@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:rd_app_net/src/adapters/rd_adapter.dart';
 
 class RDNetError<T> implements Exception {
@@ -14,6 +16,35 @@ class RDNetError<T> implements Exception {
       this.message,
       this.response,
       this.stackTrace});
+
+  @override
+  String toString() {
+    final buffer = StringBuffer('$runtimeType(code: $code');
+    if (message != null && message!.isNotEmpty) {
+      buffer.write(', message: $message');
+    }
+    final res = response;
+    if (res != null) {
+      buffer.write(', statusCode: ${res.statusCode}');
+      final req = res.request;
+      if (req != null) {
+        buffer.write(', method: ${req.httpMethod.name}');
+        buffer.write(', url: ${req.url}');
+      }
+      if (res.data != null) {
+        buffer.write(', responseData: ${_formatResponseData(res.data)}');
+      }
+    }
+    buffer.write(')');
+    return buffer.toString();
+  }
+
+  static String _formatResponseData(Object? data) {
+    if (data is Map) {
+      return jsonEncode(data);
+    }
+    return data.toString();
+  }
 }
 
 class NotSignedInError extends RDNetError {
