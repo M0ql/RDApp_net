@@ -1,5 +1,5 @@
 name: rd_app_net
-description: "A new Flutter package project."
+description: "RatingDog Internal Use."
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
