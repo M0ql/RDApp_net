@@ -12,7 +12,7 @@ class RDNetError<T> implements Exception {
   RDNetError(
       {required this.code,
       this.message,
-      required this.response,
+      this.response,
       this.stackTrace});
 }
 
@@ -46,4 +46,13 @@ class ParamsError<T> extends RDNetError<T> {
       super.message,
       required super.response,
       super.stackTrace});
+}
+
+class NoNetworkError extends RDNetError {
+  NoNetworkError({
+    super.code = -2,
+    super.message = '无网络连接',
+    super.response,
+    super.stackTrace,
+  });
 }

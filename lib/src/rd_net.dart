@@ -79,6 +79,9 @@ class RDNet {
       response = await DioAdapter().send(request);
       code = response.statusCode;
       message = response.message;
+    } on NoNetworkError catch (e) {
+      _config.onError?.call(e);
+      rethrow;
     } on RDNetError catch (e) {
       response = e.response;
       code = e.code;

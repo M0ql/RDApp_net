@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:rd_app_net/src/adapters/dio/custom_interceptor.dart';
@@ -27,6 +30,11 @@ class DioAdapter implements RDAdapter {
 
   @override
   Future<RDNetResponse> send(RDBaseRequest request) async {
+    final connectivityResults = await Connectivity().checkConnectivity();
+    if (connectivityResults.every((r) => r == ConnectivityResult.none)) {
+      throw NoNetworkError();
+    }
+
     final accessToken = RDNet().accessToken();
     final isSignedIn = accessToken != null && accessToken.isNotEmpty;
 
@@ -85,6 +93,13 @@ class DioAdapter implements RDAdapter {
 
       return _buildResponse(response, request);
     } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionError ||
+          (e.type == DioExceptionType.unknown && e.error is SocketException)) {
+        throw NoNetworkError(
+          message: e.message,
+          stackTrace: e.stackTrace,
+        );
+      }
       throw RDNetError(
         code: e.response?.statusCode ?? -1,
         message: e.message,
